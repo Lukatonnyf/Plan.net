@@ -65,4 +65,5 @@ const ActivityFormFields = forwardRef<HTMLDivElement, ActivityFormFieldsProps>(
       </div>
     )
   })
+ActivityFormFields.displayName = "ActivityFormFields";
 export default ActivityFormFields;
