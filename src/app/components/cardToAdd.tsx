@@ -9,7 +9,6 @@ import { CiCircleCheck } from "react-icons/ci";
 interface ActivityProps {
   id: number;
   nameActivity: string;
-  date: Date;
   hour: string; // Formato: "HH:mm"
 }
 gsap.registerPlugin(ScrollTrigger);
@@ -27,7 +26,6 @@ export default function ActivityForm() {
    */
   const [formData, setFormData] = useState<Omit<ActivityProps, "id">>({
     nameActivity: "",
-    date: new Date(),
     hour: "",
   });
   // ✅ Atualiza o estado do formuláriof
@@ -73,7 +71,7 @@ export default function ActivityForm() {
     };
 
     setActivities(prev => [...prev, newActivity]);
-    setFormData({ nameActivity: "", date: new Date(), hour: "" });
+    setFormData({ nameActivity: "", hour: "" });
   }
   const [showForm, setShowForm] = useState(false)
 
@@ -107,15 +105,17 @@ export default function ActivityForm() {
   useLayoutEffect(() => {
 
     if (cardComoFunciona.current) {
+      const isLarge = window.innerWidth >= 1024;
       gsap.fromTo(
         cardComoFunciona.current,
         {
           opacity: 0,
-          x: 20,
+          x: 200,
         },
         {
           x: 0,
           opacity: 1,
+          delay: isLarge ? 1 : 0,
           duration: 1.5,
           ease: "power2.out",
           scrollTrigger: {
@@ -151,12 +151,39 @@ export default function ActivityForm() {
   }, [showForm]);
 
 
+  // ATIVIDADES CADASTRADAS:
+  const cardAtividades = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+
+    if (cardAtividades.current) {
+      gsap.fromTo(
+        cardAtividades.current,
+        {
+          opacity: 0,
+          y: 100,
+        },
+        {
+          y: -10,
+          opacity: 1,
+          duration: 1.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: cardAtividades.current,
+            start: "top 80%",
+            end: "top 30%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+    }
+  }, []);
+
 
 
   return (
-    <div className="flex flex-col w-full h-full relative lg:flex-row lg:p-0 overflow-x-hidden">
+    <div className="flex flex-col w-full h-full  relative lg:flex-row lg:p-0 overflow-x-hidden overflow-y-hidden">
       {/* CARD EXPLICAÇÃO */}
-      <main className="flex flex-col w-full min-h-[60dvh] h-full gap-5 ">
+      <main className="flex flex-col w-full min-h-full h-full gap-5 ">
         {/* section Como funciona? */}
         <div className="flex flex-col w-full pl-2 ">
           <section ref={cardComoFunciona} className="w-full bg-card border-r-textopaco border-r-4
@@ -208,33 +235,35 @@ export default function ActivityForm() {
 
 
 
-      </main>
+
+      </main >
       {/* Lista de atividades */}
-      <aside className="w-full px-2 border">
-        {activities.length > 0 ? (
-          <>
-            <h3 className="text-lg font-bold mt-4 mb-2 text-gray-300">Atividades Cadastradas</h3>
-            <ul className=" flex flex-col w-full h-[30dvh]  overflow-y-auto gap-5 ">
-              {activities.map(activity => (
-                <li key={activity.id}
-                  className="flex justify-between text-gray-200 w-full  rounded-xl
+      <aside className="w-full py-2 px-2 lg:px-0 lg:pr-2" >
+        <div ref={cardAtividades} className="w-full h-full pb-10 p-5 bg-card rounded-2xl lg:max-h-[40dvh] lg:rounded-sm">
+          {activities.length > 0 ? (
+            <>
+              <h3 className="text-lg font-bold mt-4 mb-2 text-gray-300">Atividades Cadastradas</h3>
+              <ul className=" flex flex-col items-center w-full h-[30dvh]  overflow-y-auto gap-5 pr-4 ">
+                {activities.map(activity => (
+                  <li key={activity.id}
+                    className="flex justify-between text-gray-200 w-full  rounded-xl
                    px-2 py-3 bg-background-activitys border-1 border-bd-activitys ">
-                  <strong className="flex justify-center items-center gap-2
+                    <strong className="flex justify-center items-center gap-2
                   text-sm lg:text-lg"><CiCircleCheck />
-                    {activity.nameActivity}</strong>
-                  {activity.hour}{" "}
-                  {new Date(activity.date).toLocaleDateString("pt-BR", {
-                    day: "2-digit",
-                    month: "2-digit"
-                  })}
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : <ul className=" text-gray-50 flex flex-col w-full h-[30dvh]  overflow-y-auto gap-5 ">
-          <span>cadastre uma atividade</span>
-        </ul>}
-      </aside>
-    </div>
+                      {activity.nameActivity}</strong>
+                    {activity.hour}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : <ul className="px-2 text-gray-50 flex flex-col w-full h-[30dvh] text-gray-400 text-sm lg:text-lg
+             ">
+            <span className="text-lg font-bold text-gray-300 mb-3">Cadastre uma Atividade</span>
+            <li className="font-semibold">- Para se organizar melhor, crie suas atividades diárias clicando no botão acima!</li>
+            <li className="font-semibold">- Número de Tarefas Caastradas: <span className="text-textopaco"> {activities.length}</span></li>
+          </ul>}
+        </div>
+      </aside >
+    </div >
   );
 }

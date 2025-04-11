@@ -7,8 +7,9 @@ const nextConfig: NextConfig = {
 
 module.exports = {
   eslint: {
-    ignoreDuringBuilds: true, // 👈 isso permite o deploy mesmo com erros de lint
+    ignoreDuringBuilds: true,
   },
+
 };
 
 export default nextConfig;

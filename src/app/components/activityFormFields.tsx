@@ -4,7 +4,6 @@ import React, { forwardRef } from "react";
 interface ActivityFormFieldsProps {
   formData: {
     nameActivity: string;
-    date: Date;
     hour: string;
   };
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -31,18 +30,6 @@ const ActivityFormFields = forwardRef<HTMLDivElement, ActivityFormFieldsProps>(
           required
         />
 
-        {/* Campo de data */}
-        <label>Data</label>
-        <input
-          type="date"
-          name="date"
-          value={formData.date instanceof Date && !isNaN(formData.date.getTime())
-            ? formData.date.toISOString().split("T")[0]
-            : ""
-          }
-          onChange={handleChange}
-          className="no-datepicker border border-activitys p-2 rounded w-full mb-2 "
-        />
 
         {/* Campo de hora */}
         <label>Horário</label>
