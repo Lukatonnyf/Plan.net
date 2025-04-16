@@ -5,6 +5,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ActivityFormFields from "./activityFormFields";
 import { CiCircleCheck } from "react-icons/ci";
+import { unique } from "next/dist/build/utils";
 
 interface ActivityProps {
   id: number;
@@ -180,6 +181,8 @@ export default function ActivityForm() {
 
 
 
+
+
   return (
     <div className="flex flex-col w-full h-full  relative lg:flex-row lg:p-0 overflow-x-hidden overflow-y-hidden">
       {/* CARD EXPLICAÇÃO */}
@@ -239,7 +242,7 @@ export default function ActivityForm() {
       </main >
       {/* Lista de atividades */}
       <aside className="w-full py-2 px-2 lg:px-0 lg:pr-2" >
-        <div ref={cardAtividades} className="w-full h-full pb-10 p-5 bg-card rounded-2xl lg:max-h-[40dvh] lg:rounded-sm">
+        <div ref={cardAtividades} className="w-full h-full pb-10 p-5 bg-card rounded-2xl  lg:h-full lg:max-h-[40dvh] lg:rounded-sm">
           {activities.length > 0 ? (
             <>
               <h3 className="text-lg font-bold mt-4 mb-2 text-gray-300">Atividades Cadastradas</h3>
