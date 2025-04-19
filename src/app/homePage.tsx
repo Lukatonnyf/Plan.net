@@ -112,7 +112,7 @@ export default function HomePage() {
 
           <div ref={buttons} className='flex flex-row gap-2 lg:gap-5'>
             <Button onClick={handleScroll} text={'Criar Atividade'} className="bg-gray-100 text-black" />
-            <a href="https://lukatonnyferreiraportifolio.vercel.app/">
+            <a href="https://lukatonnyferreiraportifolio.vercel.app/" target='_blank'>
               <Button text={'Desenvolvedor'} className="bg-btncolor text-white" />
             </a>
           </div>
