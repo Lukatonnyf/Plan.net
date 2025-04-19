@@ -2,11 +2,19 @@
 
 import React, { useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
+gsap.registerPlugin(ScrollToPlugin)
+
 import Image from 'next/image'
+import { Goldman } from 'next/font/google';
 
 import test from "../../public/peoplestudy.png"
-import { Goldman } from 'next/font/google';
 import Button from './components/button'
+
+
+
+
+
 
 
 const goldman = Goldman({
@@ -14,6 +22,8 @@ const goldman = Goldman({
   weight: ['400', '700'],
   display: 'swap',
 });
+
+
 
 export default function HomePage() {
   const text1 = useRef<HTMLDivElement>(null)
@@ -65,6 +75,18 @@ export default function HomePage() {
   }, []);
 
 
+
+  const handleScroll = () => {
+    const targetSection = document.getElementById('cadastrar-atividades')
+    if (targetSection) {
+      gsap.to(window, {
+        duration: 1.5,
+        scrollTo: targetSection
+      })
+    }
+  }
+
+
   return (
     <div className={`${goldman.className} w-full min-h-[100dvh] p-5 flex justify-center items-center
         shadow-custom-purple-700`}
@@ -89,8 +111,10 @@ export default function HomePage() {
           </div>
 
           <div ref={buttons} className='flex flex-row gap-2 lg:gap-5'>
-            <Button text={'Testando'} className="bg-gray-100 text-black" />
-            <Button text={'Testando'} className="bg-btncolor text-white" />
+            <Button onClick={handleScroll} text={'Criar Atividade'} className="bg-gray-100 text-black" />
+            <a href="https://lukatonnyferreiraportifolio.vercel.app/">
+              <Button text={'Desenvolvedor'} className="bg-btncolor text-white" />
+            </a>
           </div>
         </section>
 

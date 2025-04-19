@@ -1,11 +1,12 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
+import { Pencil, Save, Trash } from 'lucide-react';
 import { gsap } from 'gsap'
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ActivityFormFields from "./activityFormFields";
 import { CiCircleCheck } from "react-icons/ci";
-import { unique } from "next/dist/build/utils";
+import useLocalStorage from "./localstorage";
 
 interface ActivityProps {
   id: number;
@@ -14,8 +15,7 @@ interface ActivityProps {
 }
 gsap.registerPlugin(ScrollTrigger);
 export default function ActivityForm() {
-
-  const [activities, setActivities] = useState<ActivityProps[]>([]);
+  const [activities, setActivities] = useLocalStorage<ActivityProps[]>('activities', []);
   // ✅ Cria o array
   /** 💡 Como funciona?
    *  @Resumo :
@@ -180,11 +180,16 @@ export default function ActivityForm() {
   }, []);
 
 
+  // BUTTON EDIT
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editedName, setEditedName] = useState<string>('');
 
 
+  // SALVAR LOCAL STORAGE
 
   return (
-    <div className="flex flex-col w-full h-full  relative lg:flex-row lg:p-0 overflow-x-hidden overflow-y-hidden">
+    <div className="flex flex-col w-full h-full  relative lg:flex-row lg:p-0 overflow-x-hidden overflow-y-hidden"
+      id="cadastrar-atividades">
       {/* CARD EXPLICAÇÃO */}
       <main className="flex flex-col w-full min-h-full h-full gap-5 ">
         {/* section Como funciona? */}
@@ -246,25 +251,74 @@ export default function ActivityForm() {
           {activities.length > 0 ? (
             <>
               <h3 className="text-lg font-bold mt-4 mb-2 text-gray-300">Atividades Cadastradas</h3>
-              <ul className=" flex flex-col items-center w-full h-[30dvh]  overflow-y-auto gap-5 pr-4 ">
+              <ul className="flex flex-col items-center w-full h-[30dvh] overflow-y-auto gap-5 pr-4">
                 {activities.map(activity => (
-                  <li key={activity.id}
-                    className="flex justify-between text-gray-200 w-full  rounded-xl
-                   px-2 py-3 bg-background-activitys border-1 border-bd-activitys ">
-                    <strong className="flex justify-center items-center gap-2
-                  text-sm lg:text-lg"><CiCircleCheck />
-                      {activity.nameActivity}</strong>
-                    {activity.hour}
+                  <li
+                    key={activity.id}
+                    className="flex justify-between items-center text-gray-200 w-full rounded-xl px-2 py-3 bg-background-activitys border border-bd-activitys"
+                  >
+                    <div className="flex items-center gap-2 text-sm lg:text-lg">
+                      <CiCircleCheck />
+                      {/* Se ao clicar no botao editar, ele checa se o id está correto, caso sim, ele renderiza o
+                      input para editar, se não, ele deixa o texto que já está escrito mesmo. */}
+                      {editingId === activity.id ? (
+                        <input
+                          type="text"
+                          value={editedName}
+                          onChange={(e) => setEditedName(e.target.value)}
+                          className="bg-gray-800 text-white rounded px-2 py-1 w-full"
+                        />
+                      ) : (
+                        <strong>{activity.nameActivity}</strong>
+                      )}
+                    </div>
+
+                    <div className="flex items-center flex-row">
+                      <span className="mx-4">{activity.hour}</span>
+
+                      {editingId === activity.id ? (
+                        <button
+                          onClick={() => {
+                            // Salvar nova atividade (pode também fazer API call aqui)
+                            const updated = activities.map(act =>
+                              act.id === activity.id ? { ...act, nameActivity: editedName } : act
+                            );
+                            setActivities(updated); // Atualiza lista
+                            setEditingId(null);     // Sai do modo edição
+                          }}
+                          className="text-green-400 hover:underline"
+                        >    <Save />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setEditingId(activity.id);
+                            setEditedName(activity.nameActivity);
+                          }}
+                          className="text-blue-400 hover:underline"
+                        >
+                          <Pencil />
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          const updated = activities.filter(act => act.id !== activity.id);
+                          setActivities(updated);
+                        }}
+                        className="text-red-400 hover:underline ml-2"><Trash /></button>
+                    </div>
+
                   </li>
                 ))}
               </ul>
             </>
-          ) : <ul className="px-2 text-gray-50 flex flex-col w-full h-[30dvh] text-gray-400 text-sm lg:text-lg
-             ">
-            <span className="text-lg font-bold text-gray-300 mb-3">Cadastre uma Atividade</span>
-            <li className="font-semibold">- Para se organizar melhor, crie suas atividades diárias clicando no botão acima!</li>
-            <li className="font-semibold">- Número de Tarefas Caastradas: <span className="text-textopaco"> {activities.length}</span></li>
-          </ul>}
+          ) :
+            <ul className="px-2 text-gray-50 flex flex-col w-full h-[30dvh] text-gray-400 text-sm lg:text-lg">
+              <span className="text-lg font-bold text-gray-300 mb-3">Cadastre uma Atividade</span>
+              <li className="font-semibold">- Para se organizar melhor, crie suas atividades diárias clicando no botão acima!</li>
+              <li className="font-semibold">- Número de Tarefas Caastradas: <span className="text-textopaco"> {activities.length}</span></li>
+            </ul>}
         </div>
       </aside >
     </div >
